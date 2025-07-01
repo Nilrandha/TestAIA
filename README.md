@@ -53,3 +53,11 @@ Modify the function to:
 - Validate fields like `firstName` and `lastName`
 - Return HTTP 400 if fields are missing
 - Add unit test cases in `FunctionTest.java`
+
+
+
+Connection String - jdbc:sqlserver://nilufreesqldbserver.database.windows.net:1433;database=myFreeDB;user=nilrandha@nilufreesqldbserver;password=testaia@123;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+
+Database name - myFreeDB
+Table Name - UserDetails
+Column Names - UserId(Auto Increment),Username,Name,Email,Password
