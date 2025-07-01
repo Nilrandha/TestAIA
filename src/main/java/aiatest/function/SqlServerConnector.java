@@ -21,7 +21,7 @@ public class SqlServerConnector {
             //            + "hostNameInCertificate=*.database.windows.net;"
             //            + "loginTimeout=30;";
 
-            String url = System.getenv("DB_SETTEINGS");
+            String url = System.getenv("DB_SETTINGS");
              con = DriverManager.getConnection(url);
             // Establish connection
             con = DriverManager.getConnection(url);
