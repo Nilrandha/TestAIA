@@ -11,17 +11,17 @@ public class SqlServerConnector {
             // Load SQL Server JDBC driver
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-            // Define your connection string
-            // String url = "jdbc:sqlserver://nilufreesqldbserver.database.windows.net:1433;"
-            //            + "database=myFreeDB;"
-            //            + "user=nilrandha@nilufreesqldbserver;"
-            //            + "password=testaia@123;" 
-            //            + "encrypt=true;"
-            //            + "trustServerCertificate=false;"
-            //            + "hostNameInCertificate=*.database.windows.net;"
-            //            + "loginTimeout=30;";
+            
+            String url = "jdbc:sqlserver://nilufreesqldbserver.database.windows.net:1433;"
+                       + "database=myFreeDB;"
+                       + "user=nilrandha@nilufreesqldbserver;"
+                       + "password=testaia@123;" 
+                       + "encrypt=true;"
+                       + "trustServerCertificate=false;"
+                       + "hostNameInCertificate=*.database.windows.net;"
+                       + "loginTimeout=30;";
 
-            String url = System.getenv("DB_CONNECTION_STRING");
+            //String url = System.getenv("DB_CONNECTION_STRING");
              con = DriverManager.getConnection(url);
             // Establish connection
             con = DriverManager.getConnection(url);
@@ -29,7 +29,7 @@ public class SqlServerConnector {
 
             // Example query execution
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT first_name FROM users where UserId= 310");
+            ResultSet rs = stmt.executeQuery("SELECT first_name FROM users ");
 
             while (rs.next()) {
                 System.out.println("Row: " + rs.getString(1));
