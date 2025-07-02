@@ -15,7 +15,7 @@ public class TimeFunc {
     ) {
         try {
            SqlServerConnector ss  = new SqlServerConnector();
-           ss.callSqlServer();
+           ss.callSqlServer(context);
         } catch (Exception e) {
             context.getLogger().severe("Error calling SQL Server: " + e.getMessage());
         }
