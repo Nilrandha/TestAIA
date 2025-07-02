@@ -4,8 +4,11 @@ import java.sql.*;
 
 public class SqlServerConnector {
 
-    public static void main(String[] args) {
+    //public static void main(String[] args) {
+
+        public userDTO callSqlServer(){
         Connection con = null;
+        userDTO us = new userDTO();
 
         try {
             // Load SQL Server JDBC driver
@@ -30,17 +33,21 @@ public class SqlServerConnector {
             // Example query execution
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT first_name FROM users ");
-
+           
             while (rs.next()) {
+                
+                us.setfName(rs.getString("username"));
                 System.out.println("Row: " + rs.getString(1));
             }
 
             rs.close();
             stmt.close();
+            
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try { if (con != null) con.close(); } catch (Exception e) {}
         }
+        return us;
     }
 }
