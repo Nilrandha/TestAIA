@@ -39,8 +39,8 @@ public class SqlServerConnector {
            
             while (rs.next()) {
                 
-            us.setfName(rs.getString("username"));
-            String logUserName = rs.getString("username");
+            us.setfName(rs.getString("first_name"));
+            String logUserName = rs.getString("first_name");
                 context.getLogger().info("User Name : "+logUserName);
                 System.out.println("Row: " + rs.getString(1));
             }
@@ -50,7 +50,7 @@ public class SqlServerConnector {
             
         } catch (Exception e) {
             e.printStackTrace();
-            context.getLogger().info("DB Error");
+            context.getLogger().info("DB Error "+e.getMessage());
         } finally {
             try { if (con != null) con.close(); } catch (Exception e) {}
         }
