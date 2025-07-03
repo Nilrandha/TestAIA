@@ -36,6 +36,7 @@ public class SqlServerConnector {
             // Example query execution
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT first_name FROM users ");
+            context.getLogger().info("Query executed successfully.");
            
             while (rs.next()) {
                 
