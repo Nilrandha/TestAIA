@@ -27,7 +27,7 @@ public class Function {
      */
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @FunctionName("HttpExample")
+    @FunctionName("HttpAIA")
     public HttpResponseMessage run(
             @HttpTrigger(
                     name = "req",
