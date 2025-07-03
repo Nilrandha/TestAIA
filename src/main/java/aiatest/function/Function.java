@@ -88,7 +88,7 @@ public class Function {
                 }
 
                 try (Connection conn = DriverManager.getConnection(url)) {
-                    String sql = "UPDATE users SET first_name=?, last_name=?, city=?, age=? WHERE id=?";
+                    String sql = "UPDATE users SET firstname=?, last_name=?, city=?, age=? WHERE id=?";
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
@@ -127,6 +127,7 @@ public class Function {
 
         } catch (Exception e) {
             context.getLogger().severe("Error processing request: " + e.getMessage());
+            context.getLogger().info("DB Error:" +e.getMessage());
             return errorResponse(request, "Exception occurred");
         }
     }
