@@ -26,6 +26,7 @@ public class Function {
      * 2. curl "{your host}/api/HttpExample?name=HTTP%20Query"
      */
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    
 
     @FunctionName("HttpExample")
     public HttpResponseMessage run(
@@ -37,8 +38,11 @@ public class Function {
             final ExecutionContext context) {
 
         context.getLogger().info("Java HTTP trigger processed a " + request.getHttpMethod().name() + " request.");
-        String url = System.getenv("DB_SETTINGS");
+       // String url = System.getenv("DB_SETTINGS");
+       // String url = "jdbc:mysql://localhost:3306/azuredb;user=root;password=Malee@2000";
         try {
+            String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+            
             Optional<String> requestBody = request.getBody();
             if (!requestBody.isPresent() || requestBody.get().isEmpty()) {
                 return errorResponse(request, "Empty request body");
@@ -61,6 +65,19 @@ public class Function {
                 }
 
                 try (Connection conn = DriverManager.getConnection(url)) {
+                    String checkSql = "SELECT COUNT(*) FROM users WHERE first_name = ? AND last_name = ? AND city = ? AND age = ?";
+                    PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+                    checkStmt.setString(1, firstName);
+                    checkStmt.setString(2, lastName);
+                    checkStmt.setString(3, city);
+                    checkStmt.setInt(4, age);
+                    var rs = checkStmt.executeQuery();
+                    rs.next();
+                    int count = rs.getInt(1);
+                    if (count > 0) {
+                        return errorResponse(request, "Duplicate user record already exists.");
+                    }
+
                     String sql = "INSERT INTO users (first_name, last_name, city, age) VALUES (?, ?, ?, ?)";
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setString(1, firstName);
@@ -110,7 +127,7 @@ public class Function {
                     return errorResponse(request, "Invalid or missing id for delete");
                 }
 
-                try (Connection conn = DriverManager.getConnection(url)) {
+                try (Connection conn = DatabaseUtil.getConnection()) {
                     String sql = "DELETE FROM users WHERE id=?";
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setInt(1, id);
