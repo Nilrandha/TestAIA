@@ -41,7 +41,8 @@ public class Function {
        // String url = System.getenv("DB_SETTINGS");
        // String url = "jdbc:mysql://localhost:3306/azuredb;user=root;password=Malee@2000";
         try {
-            String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+            //String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+            String url = System.getenv("DB_SETTINGS");
             
             Optional<String> requestBody = request.getBody();
             if (!requestBody.isPresent() || requestBody.get().isEmpty()) {

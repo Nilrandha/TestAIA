@@ -23,7 +23,8 @@ public class FunctionGet {
 
         context.getLogger().info("Processing GET request...");
 
-        String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+        //String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+        String url = System.getenv("DB_SETTINGS");
 
         try {
             String idParam = request.getQueryParameters().get("id");
