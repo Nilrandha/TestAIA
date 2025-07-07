@@ -32,7 +32,7 @@ public class Function {
     public HttpResponseMessage run(
             @HttpTrigger(
                     name = "req",
-                    methods = {HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE},
+                    methods = {HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE},
                     authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
@@ -41,11 +41,12 @@ public class Function {
        // String url = System.getenv("DB_SETTINGS");
        // String url = "jdbc:mysql://localhost:3306/azuredb;user=root;password=Malee@2000";
         try {
-            String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+            //String url = "jdbc:mysql://localhost:3306/azuredb?user=root&password=Malee%402000";
+            String url = System.getenv("DB_SETTINGS");
             
             Optional<String> requestBody = request.getBody();
             if (!requestBody.isPresent() || requestBody.get().isEmpty()) {
-                return errorResponse(request, "Empty request body");
+                return errorResponse(request, "Empty request body", null, null);
             }
 
             JsonNode jsonNode = objectMapper.readTree(requestBody.get());
@@ -61,7 +62,7 @@ public class Function {
                 if (firstName == null || lastName == null || city == null || age == null ||
                         firstName.isEmpty() || lastName.isEmpty() || city.isEmpty() ||
                         !firstName.matches("[a-zA-Z]+") || !lastName.matches("[a-zA-Z]+")) {
-                    return errorResponse(request, "Invalid or missing data for insert");
+                    return errorResponse(request, "Invalid or missing data for insert", null, null);
                 }
 
                 try (Connection conn = DriverManager.getConnection(url)) {
@@ -75,7 +76,7 @@ public class Function {
                     rs.next();
                     int count = rs.getInt(1);
                     if (count > 0) {
-                        return errorResponse(request, "Duplicate user record already exists.");
+                        return errorResponse(request, "Duplicate user record already exists.", null, null);
                     }
 
                     String sql = "INSERT INTO users (first_name, last_name, city, age) VALUES (?, ?, ?, ?)";
@@ -88,7 +89,7 @@ public class Function {
                     context.getLogger().info("User inserted successfully");
                 }
 
-                return successResponse(request, "User inserted successfully");
+                return successResponse(request, "User inserted successfully", firstName, lastName);
 
             } else if (method == HttpMethod.PUT) {
                 // PUT: Update existing record
@@ -101,7 +102,7 @@ public class Function {
                 if (id <= 0 || firstName == null || lastName == null || city == null || age == null ||
                         firstName.isEmpty() || lastName.isEmpty() || city.isEmpty() ||
                         !firstName.matches("[a-zA-Z]+") || !lastName.matches("[a-zA-Z]+")) {
-                    return errorResponse(request, "Invalid or missing data for update");
+                    return errorResponse(request, "Invalid or missing data for update", null, null);
                 }
 
                 try (Connection conn = DriverManager.getConnection(url)) {
@@ -114,17 +115,17 @@ public class Function {
                     stmt.setInt(5, id);
                     int rows = stmt.executeUpdate();
                     if (rows == 0) {
-                        return errorResponse(request, "No user found with given id");
+                        return errorResponse(request, "No user found with given id", null, null);
                     }
                 }
 
-                return successResponse(request, "User updated successfully");
+                return successResponse(request, "User updated successfully", firstName, lastName);
 
             } else if (method == HttpMethod.DELETE) {
                 // DELETE: Remove record by id
                 int id = jsonNode.path("id").asInt(-1);
                 if (id <= 0) {
-                    return errorResponse(request, "Invalid or missing id for delete");
+                    return errorResponse(request, "Invalid or missing id for delete", null, null);
                 }
 
                 try (Connection conn = DatabaseUtil.getConnection()) {
@@ -133,32 +134,34 @@ public class Function {
                     stmt.setInt(1, id);
                     int rows = stmt.executeUpdate();
                     if (rows == 0) {
-                        return errorResponse(request, "No user found with given id");
+                        return errorResponse(request, "No user found with given id", null, null);
                     }
                 }
 
-                return successResponse(request, "User deleted successfully");
-            }
+                return successResponse(request, "User deleted successfully", null, null);
+             }
 
-            return errorResponse(request, "Unsupported HTTP method");
+
+
+            return errorResponse(request, "Unsupported HTTP method", null, null);
 
         } catch (Exception e) {
             context.getLogger().severe("Error processing request: " + e.getMessage());
             context.getLogger().info("DB Error:" +e.getMessage());
-            return errorResponse(request, "Exception occurred");
+            return errorResponse(request, "Exception occurred", null, null);
         }
     }
 
-    private HttpResponseMessage successResponse(HttpRequestMessage<Optional<String>> request, String message) {
-        ResponseEntity responseEntity = new ResponseEntity(0, message);
+    private HttpResponseMessage successResponse(HttpRequestMessage<Optional<String>> request, String message,String firstName, String lastName) {
+        ResponseEntity responseEntity = new ResponseEntity(0, message, firstName, lastName);
         return request.createResponseBuilder(HttpStatus.OK)
                 .header("Content-Type", "application/json")
                 .body(responseEntity)
                 .build();
     }
 
-    private HttpResponseMessage errorResponse(HttpRequestMessage<Optional<String>> request, String message) {
-        ResponseEntity responseEntity = new ResponseEntity(-1, message);
+    private HttpResponseMessage errorResponse(HttpRequestMessage<Optional<String>> request, String message,String firstName, String lastName) {
+        ResponseEntity responseEntity = new ResponseEntity(-1, message, firstName, lastName);
         return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                 .header("Content-Type", "application/json")
                 .body(responseEntity)
