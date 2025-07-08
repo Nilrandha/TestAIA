@@ -1,6 +1,7 @@
 package aiatest.function;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Optional;
 
@@ -45,7 +46,9 @@ public class FunctionUpdate {
                 return errorResponse(request, "Invalid or missing data for update");
             }
 
-            try (Connection conn = DatabaseUtil.getConnection()) {
+            String url = System.getenv("DB_SETTINGS");
+
+            try (Connection conn = DriverManager.getConnection(url)) {
                 String sql = "UPDATE users SET first_name=?, last_name=?, city=?, age=? WHERE id=?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setString(1, firstName);

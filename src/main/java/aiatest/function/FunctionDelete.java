@@ -1,6 +1,7 @@
 package aiatest.function;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Optional;
 
@@ -39,7 +40,9 @@ public class FunctionDelete {
                 return errorResponse(request, "Invalid or missing ID for delete");
             }
 
-            try (Connection conn = DatabaseUtil.getConnection()) {
+            String url = System.getenv("DB_SETTINGS");
+
+            try (Connection conn = DriverManager.getConnection(url)) {
                 String sql = "DELETE FROM users WHERE id = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setInt(1, id);

@@ -17,6 +17,10 @@ public class userDTO {
         this.lName = lName;
     }
   
+// https://testaiaintern.azurewebsites.net/api/getRecord
+// https://testaiaintern.azurewebsites.net/api/HttpAIA
+// https://testaiaintern.azurewebsites.net/api/updateUser
+// https://testaiaintern.azurewebsites.net/api/deleteUser
 
     
 }
